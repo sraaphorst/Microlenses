@@ -2,6 +2,8 @@ package edu.gemini.microlens;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +77,18 @@ public class MonteCarloUniformHexagons extends JPanel {
         innerTrans.scale(innerHexagonRadius, innerHexagonRadius);
         inner.transform(innerTrans);
         innerHexagons.add(inner);
+
+        innerHexagons.forEach(hexagon ->
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                final Point p = e.getPoint();
+                if (hexagon.contains(p))
+                    System.out.println("Inside hexagon");
+                else
+                    System.out.println("Outside hexagon");
+            }
+        }));
 
         final RegularHexagon outer = new RegularHexagon();
         final AffineTransform outerTrans = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint);

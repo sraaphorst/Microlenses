@@ -6,8 +6,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -17,6 +15,11 @@ public final class TestRegularHexagon extends JPanel {
     private final AffineTransform trans = AffineTransform.getTranslateInstance(SIZE / 2.0, SIZE / 2.0);
 
     private TestRegularHexagon() {
+        hexagon = new RegularHexagon();
+        final AffineTransform trans = AffineTransform.getTranslateInstance(SIZE / 2.0, SIZE / 2.0);
+        trans.scale(250, 250);
+        hexagon.transform(trans);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -31,7 +34,6 @@ public final class TestRegularHexagon extends JPanel {
         setPreferredSize(new Dimension(SIZE, SIZE));
         setMinimumSize(new Dimension(SIZE, SIZE));
         setMaximumSize(new Dimension(SIZE, SIZE));
-        hexagon = new RegularHexagon(new Point2D.Double(SIZE/2, SIZE/2), 200);
     }
 
     @Override
@@ -46,7 +48,6 @@ public final class TestRegularHexagon extends JPanel {
         final int cx = (size.width - SIZE) / 2;
         final int cy = (size.height - SIZE) / 2;
         System.out.println(cx + " " + cy);
-        //g2d.translate(SIZE/2, SIZE/2);
 
         g2d.setColor(Color.yellow);
         g2d.setStroke(new BasicStroke(5));

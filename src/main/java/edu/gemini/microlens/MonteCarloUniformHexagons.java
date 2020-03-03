@@ -85,15 +85,9 @@ public class MonteCarloUniformHexagons extends JPanel {
         innerHexagons.add(inner);
 
         // This is right, but requires the outer hexagon radius to be added.
-        final RegularHexagon inner3 = new RegularHexagon();
-        double a = innerHexagonRadius * Math.sqrt(3);
-        final AffineTransform innerTrans3 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint - a);
-        innerTrans3.scale(innerHexagonRadius, innerHexagonRadius);
-        inner3.transform(innerTrans3);
-        innerHexagons.add(inner3);
-
         final RegularHexagon inner2 = new RegularHexagon();
-        final AffineTransform innerTrans2 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint - 2 * innerHexagonRadius);
+        double a = innerHexagonRadius * Math.sqrt(3);
+        final AffineTransform innerTrans2 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint - a - (outerHexagonRadius - innerHexagonRadius));
         innerTrans2.scale(innerHexagonRadius, innerHexagonRadius);
         inner2.transform(innerTrans2);
         innerHexagons.add(inner2);
@@ -113,22 +107,6 @@ public class MonteCarloUniformHexagons extends JPanel {
                 System.out.println("Misses: " + misses);
             }
         });
-
-
-        final RegularHexagon outer = new RegularHexagon();
-        final AffineTransform outerTrans = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint);
-        outerTrans.scale(outerHexagonRadius, outerHexagonRadius);
-        outer.transform(outerTrans);
-        outerHexagons.add(outer);
-
-        final RegularHexagon outer2 = new RegularHexagon();
-        final AffineTransform outerTrans2 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint);
-        outerTrans2.scale(outerHexagonRadius, outerHexagonRadius);
-        outerTrans2.translate(500, 10);
-        System.out.println(-innerHexagonRadius - outerHexagonRadius);
-        //outerTrans2.translate(200, -innerHexagonRadius - outerHexagonRadius);
-        outer2.transform(outerTrans);
-        outerHexagons.add(outer2);
 
         setSize(d);
         setPreferredSize(d);
@@ -153,10 +131,6 @@ public class MonteCarloUniformHexagons extends JPanel {
         g2d.setColor(Color.yellow);
         g2d.setStroke(new BasicStroke(1));
         innerHexagons.forEach(g2d::draw);
-
-        System.out.println("Drawing " + outerHexagons.size() + " inner hexagons.");
-        g2d.setColor(Color.green);
-        outerHexagons.forEach(g2d::draw);
     }
 
     public static void main(String[] args) {

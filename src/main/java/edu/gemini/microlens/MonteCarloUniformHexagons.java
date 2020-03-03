@@ -78,8 +78,8 @@ public class MonteCarloUniformHexagons extends JPanel {
 
         // This is also in arcsec, and is the length of the bisection of the equilateral triangles making up the
         // hexagons. It does not include the padding.
-        final double hexagonBisector = hexagonRadius * Math.sqrt(3);
-        final double paddedHexagonBisector = paddedHexagonRadius * Math.sqrt(3);
+        final double hexagonBisector = hexagonRadius * Math.sqrt(3) / 2;
+        final double paddedHexagonBisector = paddedHexagonRadius * Math.sqrt(3) / 2;
 
         // Create the inner hexagon, and then create the concentric rings.
         hexagons = new ArrayList<>();
@@ -93,36 +93,44 @@ public class MonteCarloUniformHexagons extends JPanel {
         h.transform(transform);
         hexagons.add(h);
 
+        // This is the centre point.
+        final double cx = paddedHexagonRadius;
+        final double cy = paddedHexagonRadius;
+
+        // This is the scale.
+        final double scale = hexagonRadius;
         // This is a hexagon in ring 0, i.e. a solitary hexagon in the centre.
         final RegularHexagon hexagonRing0 = new RegularHexagon();
-        final AffineTransform trans0 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint);
-        trans0.scale(hexagonRadius, hexagonRadius);
+        final AffineTransform trans0 = new AffineTransform();
+        trans0.translate(hexagonPoint, hexagonPoint);
+        trans0.scale(scale, scale);
         hexagonRing0.transform(trans0);
         hexagons.add(hexagonRing0);
 
         // This is the top ring 1 in hexagon ring 1.
         final RegularHexagon hexagonRing1_0 = new RegularHexagon();
-        final AffineTransform trans1_0 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint - hexagonBisector - (paddedHexagonRadius - hexagonRadius));
-        trans1_0.scale(hexagonRadius, hexagonRadius);
+        final AffineTransform trans1_0 = new AffineTransform();
+        trans1_0.translate(hexagonPoint, hexagonPoint - paddedHexagonBisector - hexagonRadius); //hexagonBisector - (paddedHexagonRadius - hexagonRadius));
+        trans1_0.scale(scale, scale);
         hexagonRing1_0.transform(trans1_0);
         hexagons.add(hexagonRing1_0);
 
-        final RegularHexagon hexagonRing1_1 = new RegularHexagon();
-        final AffineTransform trans1_1 = new AffineTransform();
-        // Order of scale and rotate matters! rotate = 3 has no effect.
-        trans1_1.translate(hexagonPoint, hexagonPoint - hexagonBisector - (paddedHexagonRadius - hexagonRadius));
-        trans1_1.rotate(Math.PI / 1000.0, hexagonPoint, hexagonPoint);
-        trans1_1.scale(hexagonRadius, hexagonRadius);
-        hexagonRing1_1.transform(trans1_1);
-        hexagons.add(hexagonRing1_1);
-
-//        // This is the bottom ring 1 in hexagon ring 1.
 //        final RegularHexagon hexagonRing1_1 = new RegularHexagon();
 //        final AffineTransform trans1_1 = new AffineTransform();
-//        trans1_1.translate(hexagonPoint, hexagonPoint + a + (paddedHexagonRadius - hexagonRadius));
+//        // Order of scale and rotate matters! rotate = 3 has no effect.
+//        trans1_1.translate(hexagonPoint, hexagonPoint - hexagonBisector - (paddedHexagonRadius - hexagonRadius));
+//        trans1_1.rotate(Math.PI / 1000.0, hexagonPoint, hexagonPoint);
 //        trans1_1.scale(hexagonRadius, hexagonRadius);
 //        hexagonRing1_1.transform(trans1_1);
 //        hexagons.add(hexagonRing1_1);
+
+        // This is the bottom ring 1 in hexagon ring 1.
+        final RegularHexagon hexagonRing1_1 = new RegularHexagon();
+        final AffineTransform trans1_1 = new AffineTransform();
+        trans1_1.translate(hexagonPoint, hexagonPoint + hexagonBisector + paddedHexagonRadius);// + (paddedHexagonRadius - hexagonRadius));
+        trans1_1.scale(hexagonRadius, hexagonRadius);
+        hexagonRing1_1.transform(trans1_1);
+        hexagons.add(hexagonRing1_1);
 //
 //        // This is the bottom ring 1 in hexagon ring 1.
 //        final RegularHexagon hexagonRing1_3 = new RegularHexagon();
@@ -193,7 +201,7 @@ public class MonteCarloUniformHexagons extends JPanel {
     public static void main(String[] args) {
         final JFrame frame = new JFrame("Hexagon");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.HIGH_RESOLUTION, 0.05);
+        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.HIGH_RESOLUTION, 0.001);
         frame.add(hexagonPanel);
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

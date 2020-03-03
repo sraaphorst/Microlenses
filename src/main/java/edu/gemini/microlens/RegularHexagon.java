@@ -23,39 +23,6 @@ import java.awt.geom.Point2D;
 public class RegularHexagon extends Path2D.Double {
     // Identifier for the hexagon.
     private static int idCount = 0;
-//    /**
-//     * A hexagon with center (0,0) and a vertex at (side, 0).
-//     * @param side the length of the hexagon side
-//     */
-//    public RegularHexagon(double side) {
-//        this(new Point2D.Double(0, 0), side);
-//    }
-//
-//    /**
-//     * A hexagon with center point and a vertex at the specified point.
-//     * @param side the length of the hexagon side
-//     * @param point one of the vertices of the hexagon: must be at distance side from (0,0).
-//     */
-//    public RegularHexagon(Point2D point, double side) {
-//        super(WIND_EVEN_ODD);
-//        final AffineTransform rot = AffineTransform.getRotateInstance(Math.PI / 3.0);
-//        AffineTransform trans = AffineTransform.getTranslateInstance(point.getX(), point.getY());
-//
-//        double x = side;
-//        double y = 0;
-//
-//        moveTo(x, y);
-//        lineTo(x, y);
-//        Point2D.Double p = new Point2D.Double(x, 0);
-//        Point2D.Double p2 = new Point2D.Double();
-//        for (int i = 0; i < 6; ++i) {
-//            rot.transform(p, p);
-//            trans.transform(p, p2);
-//            System.out.println(p2.getX() + " " + p2.getY());
-//            lineTo(p.getX(), p.getY());
-//        }
-//        transform(trans);
-//    }
 
     private final int id;
 
@@ -79,6 +46,7 @@ public class RegularHexagon extends Path2D.Double {
             rot.transform(p, p);
             lineTo(p.getX(), p.getY());
         }
+        closePath();
     }
 
     public int getId() {

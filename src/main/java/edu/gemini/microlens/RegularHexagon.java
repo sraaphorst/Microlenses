@@ -21,6 +21,8 @@ import java.awt.geom.Point2D;
  * The hexagon is centered at (0,0) with sides of length 1. Affine transformations should be used to move it.
  */
 public class RegularHexagon extends Path2D.Double {
+    // Identifier for the hexagon.
+    private static int idCount = 0;
 //    /**
 //     * A hexagon with center (0,0) and a vertex at (side, 0).
 //     * @param side the length of the hexagon side
@@ -54,12 +56,16 @@ public class RegularHexagon extends Path2D.Double {
 //        }
 //        transform(trans);
 //    }
+
+    private final int id;
+
     /**
      * A hexagon with center point and a vertex at the specified point.
      */
     public RegularHexagon() {
         super(WIND_EVEN_ODD);
 
+        id = idCount++;
         // The rotation to create the edges of the hexagon.
         final AffineTransform rot = AffineTransform.getRotateInstance(Math.PI / 3.0);
 
@@ -73,5 +79,9 @@ public class RegularHexagon extends Path2D.Double {
             rot.transform(p, p);
             lineTo(p.getX(), p.getY());
         }
+    }
+
+    public int getId() {
+        return id;
     }
 }

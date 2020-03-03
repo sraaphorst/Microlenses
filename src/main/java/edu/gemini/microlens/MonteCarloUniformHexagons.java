@@ -57,6 +57,10 @@ public class MonteCarloUniformHexagons extends JPanel {
     // The set of microlenses with which we are working.
     private final Microlenses microlenses;
 
+    // The number of hits and misses.
+    public int hits = 0;
+    public int misses = 0;
+
     // The padding in arcsecs.
     public MonteCarloUniformHexagons(final Microlenses microlenses, double padding) {
         this.microlenses = microlenses;
@@ -64,8 +68,10 @@ public class MonteCarloUniformHexagons extends JPanel {
         // Create the hexagons.
         // The number of pixels per inner and outer hexagon.
         final double hexagonPoint = (SIZE + PADDING) / 2.0;
+
+        // microlenses.side and microlenses.side + padding / 2 are in arcsec, so we convert to pixels.
         innerHexagonRadius = (SIZE - PADDING) * microlenses.side;
-        outerHexagonRadius = (SIZE - PADDING) * (microlenses.side + padding);
+        outerHexagonRadius = (SIZE - PADDING) * (microlenses.side + padding / 2);
 
         // Create the inner hexagon, and then create the concentric rings.
         innerHexagons = new ArrayList<>();
@@ -78,23 +84,36 @@ public class MonteCarloUniformHexagons extends JPanel {
         inner.transform(innerTrans);
         innerHexagons.add(inner);
 
+        // This is right, but requires the outer hexagon radius to be added.
+        final RegularHexagon inner3 = new RegularHexagon();
+        double a = innerHexagonRadius * Math.sqrt(3);
+        final AffineTransform innerTrans3 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint - a);
+        innerTrans3.scale(innerHexagonRadius, innerHexagonRadius);
+        inner3.transform(innerTrans3);
+        innerHexagons.add(inner3);
+
         final RegularHexagon inner2 = new RegularHexagon();
-        final AffineTransform innerTrans2 = AffineTransform.getTranslateInstance(hexagonPoint + 100, hexagonPoint + 100);
+        final AffineTransform innerTrans2 = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint - 2 * innerHexagonRadius);
         innerTrans2.scale(innerHexagonRadius, innerHexagonRadius);
         inner2.transform(innerTrans2);
         innerHexagons.add(inner2);
 
-        innerHexagons.forEach(hexagon ->
+        // Determine if a point is in a hexagon.
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 final Point p = e.getPoint();
-                if (hexagon.contains(p))
-                    System.out.println("Inside hexagon");
-                else
-                    System.out.println("Outside hexagon");
+                for (RegularHexagon h: innerHexagons)
+                    if (h.contains(p)) {
+                        ++hits;
+                        System.out.println("Inside hexagon " + h.getId() + ", hits: " + hits);
+                        return;
+                    }
+                ++misses;
+                System.out.println("Misses: " + misses);
             }
-        }));
+        });
+
 
         final RegularHexagon outer = new RegularHexagon();
         final AffineTransform outerTrans = AffineTransform.getTranslateInstance(hexagonPoint, hexagonPoint);
@@ -132,7 +151,7 @@ public class MonteCarloUniformHexagons extends JPanel {
 
         System.out.println("Drawing " + innerHexagons.size() + " inner hexagons.");
         g2d.setColor(Color.yellow);
-        g2d.setStroke(new BasicStroke(3));
+        g2d.setStroke(new BasicStroke(1));
         innerHexagons.forEach(g2d::draw);
 
         System.out.println("Drawing " + outerHexagons.size() + " inner hexagons.");

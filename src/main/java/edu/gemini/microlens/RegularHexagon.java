@@ -1,5 +1,6 @@
 package edu.gemini.microlens;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -23,7 +24,18 @@ import java.awt.geom.Point2D;
 public class RegularHexagon extends Path2D.Double {
     // Identifier for the hexagon.
     private static int idCount = 0;
-
+    private final static Color[] colors = new Color[]{
+        Color.green,
+        Color.blue,
+        Color.magenta,
+        Color.yellow,
+        Color.red,
+        Color.white,
+        Color.pink,
+        Color.gray,
+        Color.orange,
+        Color.lightGray
+    };
     private final int id;
 
     /**
@@ -51,5 +63,9 @@ public class RegularHexagon extends Path2D.Double {
 
     public int getId() {
         return id;
+    }
+
+    public Color getColor() {
+        return colors[id % colors.length];
     }
 }

@@ -12,7 +12,6 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public final class TestRegularHexagon extends JPanel {
     private final static int SIZE = 1000;
     private final RegularHexagon hexagon;
-    private final AffineTransform trans = AffineTransform.getTranslateInstance(SIZE / 2.0, SIZE / 2.0);
 
     private TestRegularHexagon() {
         hexagon = new RegularHexagon();

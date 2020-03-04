@@ -73,76 +73,28 @@ public class MonteCarloUniformHexagons extends JPanel {
         final double bisector = Math.sqrt(3) / 2.0 * hexagonRadius;
         final double paddedBisector = Math.sqrt(3) / 2.0 * (hexagonRadius + padding);
 
-        // Width in arcseconds.
+        // Width of the world in arcseconds.
         final double width = 2 * bisector + 4 * paddedBisector;
 
         // Conversion factor from arcseconds to pixels.
-        final double conversion = SIZE * width; // pixels / arcseconds
-
-//        // We take the padding in arcsec and convert it to pixels. Since it is shared between two hexagons, we
-//        // divide it by two, and assign one half to each hexagon.
-//        // Unit: pixels.
-//        final double hexagonPadding = SIZE * padding / 2.0;
-//
-//        // We convert the side of the microlenses from arcsec to pixels.
-//        // This is also the radius of the microlenses since they are hexagons made out of six equilateral triangles.
-//        // Units: pixels.
-//        final double scale = SIZE * microlenses.side;
-//        final double hexagonRadius = SIZE * microlenses.side;
-//
-//        // Radius of a padded hexagon. Note we split the padding between touching hexagons, hence the division by two
-//        // above. These are the hexagons that surround the microlenses: i.e. the microlenses and the padding.
-//        // Unit: pixels.
-//        double paddedHexagonRadius = hexagonRadius + hexagonPadding;
-//
-//        // We need the bisector of a padded hexagon to advance through the rows.
-//        // Unit: pixels.
-//        final double paddedBisector = Math.sqrt(3) * paddedHexagonRadius / 2.0;
-//
-//        System.out.println("hexagonRadius = " + hexagonRadius);
-//        System.out.println("paddedHexagonRadius = " + paddedHexagonRadius);
-//        System.out.println("hexagonPadding = " + hexagonPadding);
-//        System.out.println("paddedBisector = " + paddedBisector);
+        final double conversion = SIZE / width; // pixels / arcseconds
 
         /** FIRST ROW **/
         // First hexagon.
         final RegularHexagon hex_1_1 = new RegularHexagon();
         final AffineTransform tr_1_1 = new AffineTransform();
-        final double hex_cx = PADDING + (bisector + paddedBisector) * conversion;
-        final double hex_cy = PADDING + paddedHexagonRadius * conversion;
-        System.out.println("Translating H1 to " + hex_cx + ", " + hex_cy);
-        tr_1_1.translate(200, 200);
+        tr_1_1.translate(PADDING + (bisector + paddedBisector) * conversion, PADDING + paddedHexagonRadius * conversion);
+        tr_1_1.scale(hexagonRadius * conversion, hexagonRadius * conversion);
         tr_1_1.rotate(Math.PI / 2.0);
-        System.out.println("Radius: " + paddedHexagonRadius * conversion);
-        tr_1_1.scale(paddedHexagonRadius * conversion, paddedHexagonRadius * conversion);
         hex_1_1.transform(tr_1_1);
         hexagons.add(hex_1_1);
 
-//        // First hexagon.
-//        final RegularHexagon hex_1_1 = new RegularHexagon();
-//        final AffineTransform tr_1_1 = new AffineTransform();
-//        //tr_1_1.translate(PADDING + /*2 * */bisector - padding, PADDING + paddedHexagonRadius / 2);
-//        //tr_1_1.translate(cx / 3 + 2 * bisector - padding, PADDING + paddedHexagonRadius / 2);
-//        tr_1_1.translate(PADDING + paddedBisector, PADDING + paddedHexagonRadius);
-//        tr_1_1.rotate(Math.PI / 2.0);
-//        tr_1_1.scale(scale, scale);
-//        hex_1_1.transform(tr_1_1);
-//        hexagons.add(hex_1_1);
-
         // Second hexagon.
-//        final RegularHexagon hex_1_2 = new RegularHexagon();
-//        final AffineTransform tr_1_2 = new AffineTransform();
-//        //tr_1_2.translate(PADDING + SIZE - 2 * paddedBisector, PADDING + paddedHexagonRadius);
-//        tr_1_2.translate(PADDING + 3 * paddedBisector, PADDING + paddedHexagonRadius);
-//        tr_1_2.scale(scale, scale);
-//        tr_1_2.rotate(Math.PI / 2.0);
-//        hex_1_2.transform(tr_1_2);
-//        hexagons.add(hex_1_2);
         final RegularHexagon hex_1_2 = new RegularHexagon();
         final AffineTransform tr_1_2 = new AffineTransform();
         tr_1_2.translate(PADDING + SIZE - (bisector + paddedBisector) * conversion, PADDING + paddedHexagonRadius * conversion);
-        tr_1_2.scale(paddedHexagonRadius * conversion / 2, paddedHexagonRadius * conversion / 2);
         tr_1_2.rotate(Math.PI / 2.0);
+        tr_1_2.scale(hexagonRadius * conversion, hexagonRadius * conversion);
         hex_1_2.transform(tr_1_2);
         hexagons.add(hex_1_2);
 
@@ -152,99 +104,6 @@ public class MonteCarloUniformHexagons extends JPanel {
                 System.out.println(e.getPoint());
             }
         });
-
-//        // The number of pixels.
-//        final double hexagonPoint = (SIZE + PADDING) / 2.0;
-//
-//        // These are in arcsec:
-//        // 1. hexagonRadius is the radius of the microlens.
-//        // 2. paddedHexagonRadius is the radius of the microlens with the padding beween them.
-//        // microlenses.side and (microlenses.side + padding) / 2 are in arcsec, so we convert to pixels.
-//        hexagonRadius = (SIZE - PADDING) * microlenses.side;
-//        paddedHexagonRadius = (SIZE - PADDING) * (microlenses.side + hexagonPad);
-//
-//        // Create rows of hexagons.
-//
-//        // This is also in arcsec, and is the length of the bisection of the equilateral triangles making up the
-//        // hexagons. It does not include the padding.
-//        final double hexagonBisector = hexagonRadius * Math.sqrt(3) / 2;
-//        final double paddedHexagonBisector = paddedHexagonRadius * Math.sqrt(3) / 2;
-//
-//        // Create the inner hexagon, and then create the concentric rings.
-//        hexagons = new ArrayList<>();
-//
-//        final RegularHexagon h = new RegularHexagon();
-//        final AffineTransform transform = new AffineTransform();
-//        transform.translate(200, 200);
-//        transform.rotate(Math.PI / 1.3);
-//        transform.scale(200, 200);
-////        transform.translate(-300, -500);
-//        h.transform(transform);
-//        hexagons.add(h);
-//
-//        // This is the centre point.
-//        final double cx = paddedHexagonRadius;
-//        final double cy = paddedHexagonRadius;
-//
-//        // This is the scale.
-//        final double scale = hexagonRadius;
-//        // This is a hexagon in ring 0, i.e. a solitary hexagon in the centre.
-//        final RegularHexagon hexagonRing0 = new RegularHexagon();
-//        final AffineTransform trans0 = new AffineTransform();
-//        trans0.translate(hexagonPoint, hexagonPoint);
-//        trans0.scale(scale, scale);
-//        hexagonRing0.transform(trans0);
-//        hexagons.add(hexagonRing0);
-//
-//        // This is the top ring 1 in hexagon ring 1.
-//        final RegularHexagon hexagonRing1_0 = new RegularHexagon();
-//        final AffineTransform trans1_0 = new AffineTransform();
-//        trans1_0.translate(hexagonPoint, hexagonPoint - paddedHexagonBisector - hexagonRadius); //hexagonBisector - (paddedHexagonRadius - hexagonRadius));
-//        trans1_0.scale(scale, scale);
-//        hexagonRing1_0.transform(trans1_0);
-//        hexagons.add(hexagonRing1_0);
-//
-////        final RegularHexagon hexagonRing1_1 = new RegularHexagon();
-////        final AffineTransform trans1_1 = new AffineTransform();
-////        // Order of scale and rotate matters! rotate = 3 has no effect.
-////        trans1_1.translate(hexagonPoint, hexagonPoint - hexagonBisector - (paddedHexagonRadius - hexagonRadius));
-////        trans1_1.rotate(Math.PI / 1000.0, hexagonPoint, hexagonPoint);
-////        trans1_1.scale(hexagonRadius, hexagonRadius);
-////        hexagonRing1_1.transform(trans1_1);
-////        hexagons.add(hexagonRing1_1);
-//
-//        // This is the bottom ring 1 in hexagon ring 1.
-//        final RegularHexagon hexagonRing1_1 = new RegularHexagon();
-//        final AffineTransform trans1_1 = new AffineTransform();
-//        trans1_1.translate(hexagonPoint, hexagonPoint + hexagonBisector + paddedHexagonRadius);// + (paddedHexagonRadius - hexagonRadius));
-//        trans1_1.scale(hexagonRadius, hexagonRadius);
-//        hexagonRing1_1.transform(trans1_1);
-//        hexagons.add(hexagonRing1_1);
-////
-////        // This is the bottom ring 1 in hexagon ring 1.
-////        final RegularHexagon hexagonRing1_3 = new RegularHexagon();
-////        final AffineTransform trans1_3 = new AffineTransform();
-////        trans1_3.translate(hexagonPoint + 1.5 * paddedHexagonRadius, hexagonPoint - paddedHexagonRadius);
-////        trans1_3.scale(hexagonRadius, hexagonRadius);
-////        hexagonRing1_3.transform(trans1_3);
-////        hexagons.add(hexagonRing1_3);
-////
-////        // This is the bottom ring 1 in hexagon ring 1.
-////        final RegularHexagon hexagonRing1_2 = new RegularHexagon();
-////        final AffineTransform trans1_2 = new AffineTransform();
-////        trans1_2.translate(hexagonPoint + 1.5 * hexagonRadius, hexagonPoint + paddedHexagonRadius);
-////        trans1_2.scale(hexagonRadius, hexagonRadius);
-////        hexagonRing1_2.transform(trans1_2);
-////        hexagons.add(hexagonRing1_2);
-//
-//
-////        final RegularHexagon hexagonRing1_1 = new RegularHexagon();
-////        final AffineTransform trans1_1 = new AffineTransform();
-////        trans1_1.translate(hexagonPoint + 1.5 * hexagonRadius + padding, hexagonPoint - hexagonRadius + 5 * padding);
-////        trans1_1.scale(hexagonRadius, hexagonRadius);
-////        //trans1_1.rotate(Math.PI / 3.0);
-////        hexagonRing1_1.transform(trans1_1);
-////        hexagons.add(hexagonRing1_1);
 
         // Determine if a point is in a hexagon.
         addMouseListener(new MouseAdapter() {

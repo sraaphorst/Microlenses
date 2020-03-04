@@ -11,13 +11,13 @@ import java.util.List;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class MonteCarloUniformHexagons extends JPanel {
+public class HexagonTest extends JPanel {
     private enum Microlenses {
         /**
          * The side of the hexagons in arcsecs and the filling factor as a percentage of hits.
          * The circles are the number of concentric circles forming the lens.
          */
-        STANDARD_RESOLUTION(0.2272, 0.85, 2),
+        STANDARD_RESOLUTION(250, 0.85, 2),
         HIGH_RESOLUTION(0.1365, 0.93, 3);
 
         final double side;
@@ -44,11 +44,10 @@ public class MonteCarloUniformHexagons extends JPanel {
      */
     // The size of the component and the padding around it.
     // This PADDING is different from padding, which is the padding between microlenses.
-    private final static int SIZE = 900;
-    private final static int PADDING = 100;
-    private final static Dimension d = new Dimension(SIZE + 2 * PADDING, SIZE + 2 * PADDING);
+    private final static int SIZE = 1000;
+    private final static Dimension d = new Dimension(SIZE, SIZE);
 
-    private final List<RegularHexagon> hexagons;
+    private final List<Shape> hexagons;
 
     // The number of hits and misses.
     public int hits = 0;
@@ -59,64 +58,12 @@ public class MonteCarloUniformHexagons extends JPanel {
      * @param microlenses the type of simulation
      * @param padding the padding IN ARCSECS
      */
-    public MonteCarloUniformHexagons(final Microlenses microlenses, final double padding) {
+    public HexagonTest() {
         hexagons = new ArrayList<>();
-
-        // The image is square. Calculate the arcseconds across so that we can determine the number of pixels
-        // per arsecond. We can do this by drawing a line horizontally through the middle, which is four
-        // paddedBisectors + two bisectors.
-        final double hexagonRadius = microlenses.side;
-        final double paddedHexagonRadius = hexagonRadius + padding;
-
-        // We get the bisectors using the Pythagorean formula and the fact that a regular hexagon is simply
-        // six equilateral triangles, so each side of the hexagon has the same length as the radius.
-        final double bisector = Math.sqrt(3) / 2.0 * hexagonRadius;
-        final double paddedBisector = Math.sqrt(3) / 2.0 * (hexagonRadius + padding);
-
-        // Width in arcseconds.
-        final double width = 2 * bisector + 4 * paddedBisector;
-
-        // Conversion factor from arcseconds to pixels.
-        final double conversion = SIZE * width; // pixels / arcseconds
-
-//        // We take the padding in arcsec and convert it to pixels. Since it is shared between two hexagons, we
-//        // divide it by two, and assign one half to each hexagon.
-//        // Unit: pixels.
-//        final double hexagonPadding = SIZE * padding / 2.0;
-//
-//        // We convert the side of the microlenses from arcsec to pixels.
-//        // This is also the radius of the microlenses since they are hexagons made out of six equilateral triangles.
-//        // Units: pixels.
-//        final double scale = SIZE * microlenses.side;
-//        final double hexagonRadius = SIZE * microlenses.side;
-//
-//        // Radius of a padded hexagon. Note we split the padding between touching hexagons, hence the division by two
-//        // above. These are the hexagons that surround the microlenses: i.e. the microlenses and the padding.
-//        // Unit: pixels.
-//        double paddedHexagonRadius = hexagonRadius + hexagonPadding;
-//
-//        // We need the bisector of a padded hexagon to advance through the rows.
-//        // Unit: pixels.
-//        final double paddedBisector = Math.sqrt(3) * paddedHexagonRadius / 2.0;
-//
-//        System.out.println("hexagonRadius = " + hexagonRadius);
-//        System.out.println("paddedHexagonRadius = " + paddedHexagonRadius);
-//        System.out.println("hexagonPadding = " + hexagonPadding);
-//        System.out.println("paddedBisector = " + paddedBisector);
 
         /** FIRST ROW **/
         // First hexagon.
-        final RegularHexagon hex_1_1 = new RegularHexagon();
-        final AffineTransform tr_1_1 = new AffineTransform();
-        final double hex_cx = PADDING + (bisector + paddedBisector) * conversion;
-        final double hex_cy = PADDING + paddedHexagonRadius * conversion;
-        System.out.println("Translating H1 to " + hex_cx + ", " + hex_cy);
-        tr_1_1.translate(200, 200);
-        tr_1_1.rotate(Math.PI / 2.0);
-        System.out.println("Radius: " + paddedHexagonRadius * conversion);
-        tr_1_1.scale(paddedHexagonRadius * conversion, paddedHexagonRadius * conversion);
-        hex_1_1.transform(tr_1_1);
-        hexagons.add(hex_1_1);
+
 
 //        // First hexagon.
 //        final RegularHexagon hex_1_1 = new RegularHexagon();
@@ -138,13 +85,13 @@ public class MonteCarloUniformHexagons extends JPanel {
 //        tr_1_2.rotate(Math.PI / 2.0);
 //        hex_1_2.transform(tr_1_2);
 //        hexagons.add(hex_1_2);
-        final RegularHexagon hex_1_2 = new RegularHexagon();
-        final AffineTransform tr_1_2 = new AffineTransform();
-        tr_1_2.translate(PADDING + SIZE - (bisector + paddedBisector) * conversion, PADDING + paddedHexagonRadius * conversion);
-        tr_1_2.scale(paddedHexagonRadius * conversion / 2, paddedHexagonRadius * conversion / 2);
-        tr_1_2.rotate(Math.PI / 2.0);
-        hex_1_2.transform(tr_1_2);
-        hexagons.add(hex_1_2);
+//        final RegularHexagon hex_1_2 = new RegularHexagon();
+//        final AffineTransform tr_1_2 = new AffineTransform();
+//        tr_1_2.translate(PADDING + SIZE - (bisector + paddedBisector) * conversion, PADDING + paddedHexagonRadius * conversion);
+//        tr_1_2.scale(paddedHexagonRadius * conversion / 2, paddedHexagonRadius * conversion / 2);
+//        tr_1_2.rotate(Math.PI / 2.0);
+//        hex_1_2.transform(tr_1_2);
+//        hexagons.add(hex_1_2);
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -251,7 +198,7 @@ public class MonteCarloUniformHexagons extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 final Point p = e.getPoint();
-                for (RegularHexagon h: hexagons)
+                for (Hexagon h: hexagons)
                     if (h.contains(p)) {
                         ++hits;
                         System.out.println("Inside hexagon " + h.getId() + ", hits: " + hits);
@@ -277,9 +224,6 @@ public class MonteCarloUniformHexagons extends JPanel {
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, size.width, size.height);
 
-        g2d.setColor(Color.cyan);
-        g2d.drawRect(PADDING, PADDING, SIZE, SIZE);
-
         final int cx = (size.width - SIZE) / 2;
         final int cy = (size.height - SIZE) / 2;
         System.out.println(cx + " " + cy);
@@ -296,7 +240,7 @@ public class MonteCarloUniformHexagons extends JPanel {
     public static void main(String[] args) {
         final JFrame frame = new JFrame("Hexagon");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.STANDARD_RESOLUTION, 0.01);
+        final HexagonTest hexagonPanel = new HexagonTest();
         frame.add(hexagonPanel);
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -310,3 +254,4 @@ public class MonteCarloUniformHexagons extends JPanel {
         frame.setVisible(true);
     }
 }
+

@@ -6,12 +6,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class MonteCarloUniformHexagons extends JPanel {
+public class MonteCarloUniformHexagons2 extends JPanel {
     private enum Microlenses {
         /**
          * The side of the hexagons in arcsecs and the filling factor as a percentage of hits.
@@ -49,6 +50,10 @@ public class MonteCarloUniformHexagons extends JPanel {
     private final static Dimension d = new Dimension(SIZE + 2 * PADDING, SIZE + 2 * PADDING);
 
     private final List<RegularHexagon> hexagons;
+    private final List<Point2D.Double> centres;
+
+    final double conversion;
+    final double hexagonRadius;
 
     // The number of hits and misses.
     public int hits = 0;
@@ -59,13 +64,13 @@ public class MonteCarloUniformHexagons extends JPanel {
      * @param microlenses the type of simulation
      * @param padding the padding IN ARCSECS
      */
-    public MonteCarloUniformHexagons(final Microlenses microlenses, final double padding) {
+    public MonteCarloUniformHexagons2(final Microlenses microlenses, final double padding) {
         hexagons = new ArrayList<>();
 
         // The image is square. Calculate the arcseconds across so that we can determine the number of pixels
         // per arsecond. We can do this by drawing a line horizontally through the middle, which is four
         // paddedBisectors + two bisectors.
-        final double hexagonRadius = microlenses.side;
+        hexagonRadius = microlenses.side;
         final double paddedHexagonRadius = hexagonRadius + padding;
 
         // We get the bisectors using the Pythagorean formula and the fact that a regular hexagon is simply
@@ -77,9 +82,18 @@ public class MonteCarloUniformHexagons extends JPanel {
         final double width = 2 * bisector + 4 * paddedBisector;
 
         // Conversion factor from arcseconds to pixels.
-        final double conversion = SIZE / width; // pixels / arcseconds
+        conversion = SIZE / width; // pixels / arcseconds
 
         /** FIRST ROW **/
+        centres = new ArrayList<>();
+        centres.add(new Point2D.Double(bisector + paddedBisector, hexagonRadius));
+        centres.add(new Point2D.Double(bisector + 3 * paddedBisector, hexagonRadius));
+        centres.add(new Point2D.Double(bisector, paddedHexagonRadius +  hexagonRadius / 2.0)); //The y coordinate may not be right.
+        centres.add(new Point2D.Double(bisector + 2 * paddedBisector, paddedHexagonRadius + hexagonRadius / 2.0));
+        centres.add(new Point2D.Double(bisector + 4 * paddedBisector, paddedHexagonRadius + hexagonRadius / 2.0));
+        centres.add(new Point2D.Double(bisector + paddedBisector, 2 * paddedHexagonRadius));
+        centres.add(new Point2D.Double(bisector + 3 * paddedBisector, 2 * paddedHexagonRadius));
+
         // First hexagon.
         final RegularHexagon hex_1_1 = new RegularHexagon();
         final AffineTransform tr_1_1 = new AffineTransform();
@@ -110,7 +124,6 @@ public class MonteCarloUniformHexagons extends JPanel {
 
         final RegularHexagon hex_2_2 = new RegularHexagon();
         final AffineTransform tr_2_2 = new AffineTransform();
-        //tr_2_2.translate((bisector + paddedBisector * 2) * conversion, PADDING + SIZE / 2.0);
         tr_2_2.translate((SIZE + 2 * PADDING) / 2.0, PADDING + SIZE / 2.0);
         tr_2_2.rotate(Math.PI / 2.0);
         tr_2_2.scale(hexagonRadius * conversion, hexagonRadius * conversion);
@@ -199,16 +212,29 @@ public class MonteCarloUniformHexagons extends JPanel {
         System.out.println("Drawing " + hexagons.size() + " inner hexagons.");
         g2d.setColor(Color.yellow);
         g2d.setStroke(new BasicStroke(1));
-        hexagons.forEach(h -> {
-            g2d.setColor(h.getColor());
-            g2d.draw(h);
+//        hexagons.forEach(h -> {
+//            g2d.setColor(h.getColor());
+//            g2d.draw(h);
+//        });
+        centres.forEach(c -> {
+            final RegularHexagon hexagon = new RegularHexagon();
+            final double hcx = c.getX();
+            final double hcy = c.getY();
+
+            final AffineTransform trans = new AffineTransform();
+            trans.translate(PADDING + hcx * conversion, PADDING + hcy * conversion);
+            trans.rotate(Math.PI / 2.0);
+            trans.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+            hexagon.transform(trans);
+            g2d.setColor(hexagon.getColor());
+            g2d.draw(hexagon);
         });
     }
 
     public static void main(String[] args) {
         final JFrame frame = new JFrame("Hexagon");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.STANDARD_RESOLUTION, 0.04);
+        final MonteCarloUniformHexagons2 hexagonPanel = new MonteCarloUniformHexagons2(Microlenses.STANDARD_RESOLUTION, 0.04);
         frame.add(hexagonPanel);
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

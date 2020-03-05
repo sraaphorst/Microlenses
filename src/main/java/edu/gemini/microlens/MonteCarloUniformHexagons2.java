@@ -86,13 +86,13 @@ public class MonteCarloUniformHexagons2 extends JPanel {
 
         /** FIRST ROW **/
         centres = new ArrayList<>();
-        centres.add(new Point2D.Double(bisector + paddedBisector, hexagonRadius));
-        centres.add(new Point2D.Double(bisector + 3 * paddedBisector, hexagonRadius));
-        centres.add(new Point2D.Double(bisector, paddedHexagonRadius +  hexagonRadius / 2.0)); //The y coordinate may not be right.
-        centres.add(new Point2D.Double(bisector + 2 * paddedBisector, paddedHexagonRadius + hexagonRadius / 2.0));
-        centres.add(new Point2D.Double(bisector + 4 * paddedBisector, paddedHexagonRadius + hexagonRadius / 2.0));
-        centres.add(new Point2D.Double(bisector + paddedBisector, 2 * paddedHexagonRadius));
-        centres.add(new Point2D.Double(bisector + 3 * paddedBisector, 2 * paddedHexagonRadius));
+        centres.add(new Point2D.Double(bisector + paddedBisector, paddedHexagonRadius));
+        centres.add(new Point2D.Double(bisector + 3 * paddedBisector, paddedHexagonRadius));
+        centres.add(new Point2D.Double(bisector, 2 * paddedHexagonRadius +  paddedHexagonRadius / 2.0)); //The y coordinate may not be right.
+        centres.add(new Point2D.Double(bisector + 2 * paddedBisector, 2 * paddedHexagonRadius +  paddedHexagonRadius / 2.0)); //The y coordinate may not be right.
+        centres.add(new Point2D.Double(bisector + 4 * paddedBisector, 2 * paddedHexagonRadius +  paddedHexagonRadius / 2.0)); //The y coordinate may not be right.
+        centres.add(new Point2D.Double(bisector + paddedBisector, 4 * paddedHexagonRadius));
+        centres.add(new Point2D.Double(bisector + 3 * paddedBisector, 4 * paddedHexagonRadius));
 
         // First hexagon.
         final RegularHexagon hex_1_1 = new RegularHexagon();

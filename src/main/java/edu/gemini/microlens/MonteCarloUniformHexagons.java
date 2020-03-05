@@ -103,9 +103,53 @@ public class MonteCarloUniformHexagons extends JPanel {
         final AffineTransform tr_2_1 = new AffineTransform();
         tr_2_1.translate(PADDING + bisector * conversion, PADDING + SIZE / 2.0);
         tr_2_1.rotate(Math.PI / 2);
-        tr_2_1.scale(paddedHexagonRadius * conversion, paddedHexagonRadius * conversion);
+        tr_2_1.scale(hexagonRadius * conversion, hexagonRadius * conversion);
         hex_2_1.transform(tr_2_1);
         hexagons.add(hex_2_1);
+
+
+        final RegularHexagon hex_2_2 = new RegularHexagon();
+        final AffineTransform tr_2_2 = new AffineTransform();
+        //tr_2_2.translate((bisector + paddedBisector * 2) * conversion, PADDING + SIZE / 2.0);
+        tr_2_2.translate((SIZE + 2 * PADDING) / 2.0, PADDING + SIZE / 2.0);
+        tr_2_2.rotate(Math.PI / 2);
+        tr_2_2.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+        hex_2_2.transform(tr_2_2);
+        hexagons.add(hex_2_2);
+
+        final RegularHexagon hex_2_3 = new RegularHexagon();
+        final AffineTransform tr_2_3 = new AffineTransform();
+        tr_2_3.translate(SIZE  + PADDING - bisector * conversion, PADDING + SIZE / 2.0);
+        tr_2_3.rotate(Math.PI / 2);
+        tr_2_3.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+        hex_2_3.transform(tr_2_3);
+        hexagons.add(hex_2_3);
+
+        /** THIRD ROW **/
+        // First hexagon.
+        final RegularHexagon hex_3_1 = new RegularHexagon();
+        final AffineTransform tr_3_1 = new AffineTransform();
+        tr_3_1.translate(PADDING + (bisector + paddedBisector) * conversion, PADDING + SIZE - paddedHexagonRadius * conversion);
+        tr_3_1.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+        tr_3_1.rotate(Math.PI / 2.0);
+        hex_3_1.transform(tr_3_1);
+        hexagons.add(hex_3_1);
+
+        // Second hexagon.
+        final RegularHexagon hex_3_2 = new RegularHexagon();
+        final AffineTransform tr_3_2 = new AffineTransform();
+        tr_3_2.translate(PADDING + SIZE - (bisector + paddedBisector) * conversion, PADDING + SIZE - paddedHexagonRadius * conversion);
+        tr_3_2.rotate(Math.PI / 2.0);
+        tr_3_2.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+        hex_3_2.transform(tr_3_2);
+        hexagons.add(hex_3_2);
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                System.out.println(e.getPoint());
+            }
+        });
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override

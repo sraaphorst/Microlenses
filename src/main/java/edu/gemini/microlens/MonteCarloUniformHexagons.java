@@ -101,9 +101,9 @@ public class MonteCarloUniformHexagons extends JPanel {
         /** SECOND ROW **/
         final RegularHexagon hex_2_1 = new RegularHexagon();
         final AffineTransform tr_2_1 = new AffineTransform();
-        tr_2_1.translate(PADDING + (hexagonRadius - padding) * conversion, PADDING + SIZE / 2.0);
+        tr_2_1.translate(PADDING + bisector * conversion, PADDING + SIZE / 2.0);
         tr_2_1.rotate(Math.PI / 2);
-        tr_2_1.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+        tr_2_1.scale(paddedHexagonRadius * conversion, paddedHexagonRadius * conversion);
         hex_2_1.transform(tr_2_1);
         hexagons.add(hex_2_1);
 

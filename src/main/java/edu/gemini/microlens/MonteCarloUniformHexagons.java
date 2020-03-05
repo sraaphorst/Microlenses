@@ -98,6 +98,15 @@ public class MonteCarloUniformHexagons extends JPanel {
         hex_1_2.transform(tr_1_2);
         hexagons.add(hex_1_2);
 
+        /** SECOND ROW **/
+        final RegularHexagon hex_2_1 = new RegularHexagon();
+        final AffineTransform tr_2_1 = new AffineTransform();
+        tr_2_1.translate(PADDING + (hexagonRadius - padding) * conversion, PADDING + SIZE / 2.0);
+        tr_2_1.rotate(Math.PI / 2);
+        tr_2_1.scale(hexagonRadius * conversion, hexagonRadius * conversion);
+        hex_2_1.transform(tr_2_1);
+        hexagons.add(hex_2_1);
+
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {

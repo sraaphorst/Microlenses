@@ -37,7 +37,7 @@ public class MonteCarloUniformHexagons extends JPanel {
     // This is is the direct calculation instead of using monte carlo simulation.
     // 1. The area of a hexagon is (3sqrt(3)r^2)/2 for a hexagon of radius r. There are seven.
     // 2. The spaces between the hexagons in the diagram are hallways of area rp (where p is the padding) and
-    //    there are 12 of them. The equilateral triangles joining the hallways are of area (3sqrt(3)p^2)/2, and there
+    //    there are 12 of them. The equilateral triangles joining the hallways are of area (sqrt(3)p^2)/4, and there
     //    are six of them.
     // 3. The filling factor, which is the area of the microlenses over the area over the entire area, is 0.93.
     //

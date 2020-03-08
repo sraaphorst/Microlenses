@@ -34,6 +34,19 @@ public class MonteCarloUniformHexagons extends JPanel {
         }
     }
 
+    // This is is the direct calculation instead of using monte carlo simulation.
+    // 1. The area of a hexagon is (3sqrt(3)r^2)/2 for a hexagon of radius r. There are seven.
+    // 2. The spaces between the hexagons in the diagram are hallways of area rp (where p is the padding) and
+    //    there are 12 of them. The equilateral triangles joining the hallways are of area (3sqrt(3)p^2)/2, and there
+    //    are six of them.
+    // 3. The filling factor, which is the area of the microlenses over the area over the entire area, is 0.93.
+    //
+    // Thus, the equation is:
+    // hexagon area / full area = 0.93
+    // 7*(3sqrt(3)r^r)/2 / (7*(3sqrt(3)r^r)/2 + 12rp + 6*(3sqrt(3)p^2)/2) = 0.93
+    // Solving for p gives, in arcsecs:
+    final static double stdgap = 0.00632235280130467;
+
     // Create the boundary around the hexagons.
     // We need to surround them because this is our sample set.
     // This is a bit hacky but I'm not sure how else to do it.
@@ -84,7 +97,7 @@ public class MonteCarloUniformHexagons extends JPanel {
     /**
      * Initialize the simulation.
      * @param microlenses the type of simulation
-     * @param padding the padding IN arcsec
+     * @param padding the padding in arcsec
      */
     public MonteCarloUniformHexagons(final Microlenses microlenses, final double padding) {
         centres = new ArrayList<>();
@@ -226,9 +239,6 @@ public class MonteCarloUniformHexagons extends JPanel {
         g2d.setColor(Color.cyan);
         g2d.drawRect(PADDING, PADDING, SIZE, SIZE);
 
-        final int cx = (size.width - SIZE) / 2;
-        final int cy = (size.height - SIZE) / 2;
-
         g2d.setColor(Color.yellow);
         g2d.setStroke(new BasicStroke(1));
 
@@ -238,26 +248,14 @@ public class MonteCarloUniformHexagons extends JPanel {
         });
 
         Path2D sampleSpace = createSampleSpaceBorder();
-        g2d.setColor(Color.cyan);
+        g2d.setColor(Color.orange);
         g2d.draw(sampleSpace);
-//        double[] pts = new double[6];
-//        final RegularHexagon h = hexagons.get(1);
-//        final PathIterator pi = h.getPathIterator(new AffineTransform());
-//        while (!pi.isDone()) {
-//            pi.currentSegment(pts);
-//            for (int i=0; i < 6; ++i)
-//                System.out.print(pts[i] + " ");
-//            System.out.println();
-//            pi.next();
-//        }
-//        System.out.println();
-
     }
 
     public static void main(String[] args) {
         final JFrame frame = new JFrame("Hexagons");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.STANDARD_RESOLUTION, 0.04);
+        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.STANDARD_RESOLUTION, stdgap);//0.0016501056660402527);
         frame.add(hexagonPanel);
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

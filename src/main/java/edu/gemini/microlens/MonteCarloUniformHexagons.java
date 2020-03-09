@@ -11,6 +11,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -34,18 +35,22 @@ public class MonteCarloUniformHexagons extends JPanel {
         }
     }
 
+    // The number of required hits in the IFU in the Monte Carlo simulation.
+    private final int MONTE_CARLO_HITS = 10_000_000;
+
     // This is is the direct calculation instead of using monte carlo simulation.
     // 1. The area of a hexagon is (3sqrt(3)r^2)/2 for a hexagon of radius r. There are seven.
     // 2. The spaces between the hexagons in the diagram are hallways of area rp (where p is the padding) and
     //    there are 12 of them. The equilateral triangles joining the hallways are of area (sqrt(3)p^2)/4, and there
     //    are six of them.
-    // 3. The filling factor, which is the area of the microlenses over the area over the entire area, is 0.93.
+    // 3. The filling factor, which is the area of the microlenses over the area over the entire area, is 0.85.
     //
     // Thus, the equation is:
-    // hexagon area / full area = 0.93
-    // 7*(3sqrt(3)r^r)/2 / (7*(3sqrt(3)r^r)/2 + 12rp + 6*(3sqrt(3)p^2)/2) = 0.93
+    // hexagon area / full area = 0.85
+    // 7*(3sqrt(3)r^2)/2 / (7*(3sqrt(3)r^2)/2 + 12rp + 6*(sqrt(3)p^2)/4) = 0.85
     // Solving for p gives, in arcsecs:
-    final static double stdgap = 0.00632235280130467;
+    //final static double stdgap = 0.00632235280130467;
+    final static double stdgap = 0.05760253666365486;
 
     // Create the boundary around the hexagons.
     // We need to surround them because this is our sample set.
@@ -154,6 +159,8 @@ public class MonteCarloUniformHexagons extends JPanel {
             hexagons.add(hexagon);
         });
 
+        sampleSpace = createSampleSpaceBorder();
+
 //        addMouseMotionListener(new MouseMotionAdapter() {
 //            @Override
 //            public void mouseMoved(MouseEvent e) {
@@ -162,22 +169,22 @@ public class MonteCarloUniformHexagons extends JPanel {
 //        });
 
         // Determine if a point is in a hexagon.
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                final Point p = e.getPoint();
-                for (RegularHexagon h : hexagons) {
-                    if (h.contains(p)) {
-                        ++hits;
-                        System.out.println("Inside hexagon " + h.getId() + ", hits: " + hits + " point: " + p);
-                        return;
-                    }
-                }
-                //websockets
-                ++misses;
-                System.out.println("Misses: " + misses);
-            }
-        });
+//        addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                final Point p = e.getPoint();
+//                for (RegularHexagon h : hexagons) {
+//                    if (h.contains(p)) {
+//                        ++hits;
+//                        System.out.println("Inside hexagon " + h.getId() + ", hits: " + hits + " point: " + p);
+//                        return;
+//                    }
+//                }
+//                //websockets
+//                ++misses;
+//                System.out.println("Misses: " + misses);
+//            }
+//        });
     }
 
     private Path2D createSampleSpaceBorder() {
@@ -191,7 +198,7 @@ public class MonteCarloUniformHexagons extends JPanel {
         double[] ypoints = new double[6];
 
         for (int i = 0; i < 6; ++i) {
-            System.out.println("* HEX " + hexagonalOffsets[i]);
+            //System.out.println("* HEX " + hexagonalOffsets[i]);
             final RegularHexagon hex = hexagons.get(hexagonalOffsets[i]);
 
             // Grab the six points from the path iterator for hexagonakOffset i.
@@ -204,19 +211,19 @@ public class MonteCarloUniformHexagons extends JPanel {
                 pi.next();
             }
 
-            for (int j = 0; j < 6; ++j)
-                System.out.println("\t" + j + ": " + xpoints[j] + ", " + ypoints[j]);
+//            for (int j = 0; j < 6; ++j)
+//                System.out.println("\t" + j + ": " + xpoints[j] + ", " + ypoints[j]);
 
             // Now piece together the four points from this hexagon.
             // If this is the first move, just move: no line.
             for (int j = 0; j < 4; ++j) {
                 if (firstMove) {
                     firstMove = false;
-                    System.out.println("Moving to " + xpoints[hexagonalOffsetIndices[i][j]] + ", " +  ypoints[hexagonalOffsetIndices[i][j]]);
+                    //System.out.println("Moving to " + xpoints[hexagonalOffsetIndices[i][j]] + ", " +  ypoints[hexagonalOffsetIndices[i][j]]);
                     sampleSpace.moveTo(xpoints[hexagonalOffsetIndices[i][j]], ypoints[hexagonalOffsetIndices[i][j]]);
                 } else {
-                    System.out.println("hex=" + hexagonalOffsets[i] + " pointIdx=" + j);
-                    System.out.println("Line to " + xpoints[hexagonalOffsetIndices[i][j]] + ", " +  ypoints[hexagonalOffsetIndices[i][j]]);
+//                    System.out.println("hex=" + hexagonalOffsets[i] + " pointIdx=" + j);
+//                    System.out.println("Line to " + xpoints[hexagonalOffsetIndices[i][j]] + ", " +  ypoints[hexagonalOffsetIndices[i][j]]);
                     sampleSpace.lineTo(xpoints[hexagonalOffsetIndices[i][j]], ypoints[hexagonalOffsetIndices[i][j]]);
                 }
             }
@@ -252,10 +259,62 @@ public class MonteCarloUniformHexagons extends JPanel {
         g2d.draw(sampleSpace);
     }
 
+    // Return the % of randomly generated coordinates that hit the hexagons.
+//    public double monteCarlo(final double padding) {
+//        final Random r = new Random();
+//        init(padding);
+//
+//        int sampleHits = 0;
+//        int hits = 0;
+//
+//        final int iters = 100000000;
+//        for (int i = 0; i < iters; ++i) {
+//            // Generate random coordinates in space.
+//            final double dx = r.nextDouble() * SIZE + PADDING;
+//            final double dy = r.nextDouble() * SIZE + PADDING;
+//            if (sampleSpace.contains(dx, dy)) {
+//                ++sampleHits;
+//                for (final RegularHexagon hex : hexagons)
+//                    if (hex.contains(dx, dy)) {
+//                        ++hits;
+//                        break;
+//                    }
+//            }
+//        }
+//        System.out.println("Sample hits: " + sampleHits);
+//        System.out.println("Hits: " + hits);
+//        if (sampleHits == 0)
+//            return 0.0;
+//        return 1.0 * hits / sampleHits;
+//    }
+    public double monteCarlo() {
+        final Random r = new Random();
+
+        int hits = 0;
+
+        for (int i = 0; i < MONTE_CARLO_HITS;) {
+            // Generate random coordinates in space.
+            final double dx = r.nextDouble() * SIZE + PADDING;
+            final double dy = r.nextDouble() * SIZE + PADDING;
+            if (!sampleSpace.contains(dx, dy))
+                continue;
+
+            ++i;
+            for (final RegularHexagon hex : hexagons)
+                if (hex.contains(dx, dy)) {
+                    ++hits;
+                    break;
+                }
+        }
+
+        System.out.println("Hits: " + hits);
+        return 1.0 * hits / MONTE_CARLO_HITS;
+    }
+
     public static void main(String[] args) {
         final JFrame frame = new JFrame("Hexagons");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.STANDARD_RESOLUTION, stdgap);//0.0016501056660402527);
+        final MonteCarloUniformHexagons hexagonPanel = new MonteCarloUniformHexagons(Microlenses.STANDARD_RESOLUTION, stdgap/1.7355);//0.0016501056660402527);
         frame.add(hexagonPanel);
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -267,5 +326,7 @@ public class MonteCarloUniformHexagons extends JPanel {
         frame.setPreferredSize(d);
         frame.setMaximumSize(d);
         frame.setVisible(true);
+        System.out.println(hexagonPanel.monteCarlo());
+        System.out.println(stdgap/1.7355);
     }
 }
